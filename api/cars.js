@@ -13,7 +13,7 @@ const PATHNAME = 'cars.json';
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const result = await get(PATHNAME, { access: 'private' });
+      const result = await get(PATHNAME, { access: 'private', useCache: false });
       if (!result || !result.stream) {
         res.status(200).json([]);
         return;
