@@ -1,4 +1,4 @@
-const { put, head } = require('@vercel/blob');
+const { put, get } = require('@vercel/blob');
 
 const PATHNAME = 'cars.json';
 
@@ -8,13 +8,18 @@ const PATHNAME = 'cars.json';
 // Fichier en CommonJS pur (pas de TS) pour éviter tout conflit avec le
 // tsconfig Angular du projet ("module": "preserve"), qui casse le chargement
 // des fonctions Node si TypeScript est laissé en charge de la compilation.
+// Le store Blob est en accès "private" : on utilise get() (authentifié via
+// BLOB_READ_WRITE_TOKEN) plutôt qu'un fetch() direct de l'URL publique.
 module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const blob = await head(PATHNAME);
-      const response = await fetch(blob.url, { cache: 'no-store' });
-      const data = await response.json();
-      res.status(200).json(data);
+      const result = await get(PATHNAME, { access: 'private' });
+      if (!result || !result.stream) {
+        res.status(200).json([]);
+        return;
+      }
+      const text = await new Response(result.stream).text();
+      res.status(200).json(JSON.parse(text));
     } catch {
       // Aucun catalogue enregistré encore (ou store non configuré) : liste vide.
       res.status(200).json([]);
@@ -30,7 +35,7 @@ module.exports = async function handler(req, res) {
     }
     try {
       await put(PATHNAME, JSON.stringify(cars), {
-        access: 'public',
+        access: 'private',
         contentType: 'application/json',
         addRandomSuffix: false,
         allowOverwrite: true,
