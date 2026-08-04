@@ -141,12 +141,15 @@
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-md);
     overflow: hidden;
-    min-width: 220px;
+    min-width: 260px;
     display: flex;
     flex-direction: column;
     animation: fadeInUp 0.15s ease both;
 
     button {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
       border: none;
       background: none;
       text-align: left;
@@ -154,6 +157,12 @@
       font-size: 0.85rem;
       color: var(--text);
       cursor: pointer;
+
+      small {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
 
       &:hover {
         background: var(--surface-alt);

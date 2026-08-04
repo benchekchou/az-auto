@@ -44,8 +44,11 @@
         @if (isAdminOpen()) {
           <div class="header__dropdown">
             <button type="button" (click)="addCar()">+ Ajouter une voiture</button>
-            <button type="button" (click)="exportJson()">Exporter le catalogue</button>
-            <button type="button" (click)="triggerImport()">Importer un catalogue</button>
+            <button type="button" (click)="exportJson()">
+              Exporter cars.json
+              <small>à remplacer dans public/ avant de redéployer</small>
+            </button>
+            <button type="button" (click)="triggerImport()">Importer un cars.json</button>
           </div>
         }
       </div>

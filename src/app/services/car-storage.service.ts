@@ -1,12 +1,38 @@
-import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { Car, CarInput, CARBURANTS, TRANSMISSIONS, STATUTS } from '../models/car.model';
 
 const STORAGE_KEY = 'zr-auto:cars';
+// Fichier "base de données" statique embarqué dans le build (public/cars.json).
+// Il sert de catalogue de référence pour tout nouveau visiteur : pour publier de
+// nouvelles voitures, utilisez "Exporter le catalogue" puis remplacez ce fichier
+// avant de reconstruire/redéployer le site.
+const SEED_URL = 'cars.json';
 
 @Injectable({ providedIn: 'root' })
 export class CarStorageService {
+  private readonly http = inject(HttpClient);
+
   private readonly _cars = signal<Car[]>(this.load());
   readonly cars = this._cars.asReadonly();
+
+  constructor() {
+    if (localStorage.getItem(STORAGE_KEY) === null) {
+      this.seedFromStaticFile();
+    }
+  }
+
+  private async seedFromStaticFile(): Promise<void> {
+    try {
+      const data = await firstValueFrom(this.http.get<unknown>(SEED_URL));
+      if (Array.isArray(data) && data.every((c) => this.isValidCar(c))) {
+        this.persist(data as Car[]);
+      }
+    } catch {
+      // Pas de fichier cars.json (ou invalide) : le catalogue démarre vide.
+    }
+  }
 
   private load(): Car[] {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -62,9 +88,8 @@ export class CarStorageService {
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    const date = new Date().toISOString().slice(0, 10);
     link.href = url;
-    link.download = `voitures-${date}.json`;
+    link.download = 'cars.json';
     link.click();
     URL.revokeObjectURL(url);
   }
