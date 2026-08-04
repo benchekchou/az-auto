@@ -30,4 +30,8 @@ export class Home {
   get telLink(): string {
     return `tel:${this.garage.telephone.replace(/\s+/g, '')}`;
   }
+
+  get telLink2(): string {
+    return `tel:${this.garage.telephone2.replace(/\s+/g, '')}`;
+  }
 }

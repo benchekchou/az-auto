@@ -73,6 +73,10 @@ export class CarDetail {
     return `tel:${this.garage.telephone.replace(/\s+/g, '')}`;
   }
 
+  get telLink2(): string {
+    return `tel:${this.garage.telephone2.replace(/\s+/g, '')}`;
+  }
+
   get mailLink(): string {
     const car = this.car();
     const subject = car ? encodeURIComponent(`Question sur ${car.marque} ${car.modele}`) : '';

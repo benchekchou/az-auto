@@ -4,6 +4,7 @@ export const GARAGE_CONFIG = {
   ville: 'Toulouse / Saint-Orens-de-Gameville 31400',
   adresse: 'Toulouse / Saint-Orens-de-Gameville, 31400',
   telephone: '07 58 57 96 18',
+  telephone2: '07 67 42 69 21',
   // Numéro WhatsApp au format international, chiffres uniquement (ex: 33600000000).
   whatsapp: '33767426921',
   email: 'Azkautomobiles@gmail.com',
