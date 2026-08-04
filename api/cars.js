@@ -1,11 +1,14 @@
-import { put, head } from '@vercel/blob';
+const { put, head } = require('@vercel/blob');
 
 const PATHNAME = 'cars.json';
 
 // Fonction serverless Vercel : lit/écrit le catalogue partagé (Vercel Blob),
 // utilisée par le site pour que toute voiture ajoutée depuis n'importe quel
 // appareil soit visible par tous les visiteurs, sans rebuild ni redéploiement.
-export default async function handler(req: any, res: any) {
+// Fichier en CommonJS pur (pas de TS) pour éviter tout conflit avec le
+// tsconfig Angular du projet ("module": "preserve"), qui casse le chargement
+// des fonctions Node si TypeScript est laissé en charge de la compilation.
+module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const blob = await head(PATHNAME);
@@ -13,7 +16,7 @@ export default async function handler(req: any, res: any) {
       const data = await response.json();
       res.status(200).json(data);
     } catch {
-      // Aucun catalogue enregistré encore : on part d'une liste vide.
+      // Aucun catalogue enregistré encore (ou store non configuré) : liste vide.
       res.status(200).json([]);
     }
     return;
@@ -40,4 +43,4 @@ export default async function handler(req: any, res: any) {
   }
 
   res.status(405).json({ error: 'Méthode non autorisée' });
-}
+};
