@@ -1,8 +1,8 @@
 export const GARAGE_CONFIG = {
   nom: 'AZK Automobiles',
   logo: '/logo.jpeg',
-  ville: 'Nîmes 30000',
-  adresse: 'Nîmes, Gard (30000)',
+  ville: 'Toulouse / Saint-Orens-de-Gameville 31400',
+  adresse: 'Toulouse / Saint-Orens-de-Gameville, 31400',
   telephone: '07 58 57 96 18',
   // Numéro WhatsApp au format international, chiffres uniquement (ex: 33600000000).
   whatsapp: '33767426921',
