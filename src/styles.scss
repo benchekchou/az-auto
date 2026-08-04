@@ -1,0 +1,243 @@
+:root {
+  --ink: #0a0e14;
+  --ink-soft: #161b25;
+  --ink-line: #262c39;
+  --gold: #c9a24b;
+  --gold-light: #e4c878;
+  --gold-dark: #a9812f;
+  --surface: #ffffff;
+  --surface-alt: #f6f5f2;
+  --surface-line: #e7e5df;
+  --text: #14161b;
+  --text-muted: #6b7078;
+  --success: #1e7a44;
+  --warning: #b8790a;
+  --danger: #a12622;
+  --danger-bg: #fdecec;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.9rem;
+  --radius-lg: 1.25rem;
+  --shadow-sm: 0 1px 3px rgba(10, 14, 20, 0.08);
+  --shadow-md: 0 10px 30px rgba(10, 14, 20, 0.1);
+  --shadow-gold: 0 10px 30px rgba(201, 162, 75, 0.25);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--surface-alt);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+button {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--gold-light);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dark);
+  border-radius: 999px;
+  border: 2px solid var(--surface-alt);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &--primary {
+    background: var(--ink);
+    color: var(--gold-light);
+
+    &:hover {
+      background: var(--ink-soft);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &--gold {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    color: var(--ink);
+
+    &:hover {
+      box-shadow: var(--shadow-gold);
+    }
+  }
+
+  &--ghost {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--surface-line);
+
+    &:hover {
+      border-color: var(--gold);
+    }
+  }
+
+  &--outline-light {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.35);
+
+    &:hover {
+      border-color: var(--gold-light);
+      color: var(--gold-light);
+    }
+  }
+
+  &--danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+
+    &:hover {
+      box-shadow: 0 6px 16px rgba(161, 38, 34, 0.18);
+    }
+  }
+
+  &--sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.78rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+
+  &::before {
+    content: '';
+    width: 1.4rem;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  &--light {
+    color: var(--gold-light);
+
+    &::before {
+      background: var(--gold-light);
+    }
+  }
+}
+
+.badge {
+  display: inline-flex;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+
+  &--available {
+    background: var(--success);
+  }
+
+  &--reserved {
+    background: var(--warning);
+  }
+
+  &--sold {
+    background: #6b7280;
+  }
+}
+
+.error-banner {
+  padding: 0.75rem 1rem;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.5s ease both;
+}
