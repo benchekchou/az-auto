@@ -6,4 +6,10 @@
   &__main {
     flex: 1;
   }
+
+  &__sync-error {
+    margin: 0;
+    border-radius: 0;
+    text-align: center;
+  }
 }

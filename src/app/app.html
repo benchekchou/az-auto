@@ -1,5 +1,9 @@
 <div class="app-shell">
   <app-site-header />
+
+  @if (storage.syncError()) {
+    <p class="error-banner app-shell__sync-error">{{ storage.syncError() }}</p>
+  }
   <main class="app-shell__main">
     <router-outlet />
   </main>

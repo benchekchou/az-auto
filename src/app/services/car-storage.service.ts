@@ -3,39 +3,58 @@ import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Car, CarInput, CARBURANTS, TRANSMISSIONS, STATUTS } from '../models/car.model';
 
-const STORAGE_KEY = 'zr-auto:cars';
-// Fichier "base de données" statique embarqué dans le build (public/cars.json).
-// Il sert de catalogue de référence pour tout nouveau visiteur : pour publier de
-// nouvelles voitures, utilisez "Exporter le catalogue" puis remplacez ce fichier
-// avant de reconstruire/redéployer le site.
+// Cache local de secours (mode hors-ligne, ou dev local sans fonctions Vercel).
+// La source de vérité reste l'API /api/cars (Vercel Blob), partagée par tous les appareils.
+const CACHE_KEY = 'zr-auto:cars';
+const API_URL = 'api/cars';
 const SEED_URL = 'cars.json';
 
 @Injectable({ providedIn: 'root' })
 export class CarStorageService {
   private readonly http = inject(HttpClient);
 
-  private readonly _cars = signal<Car[]>(this.load());
+  private readonly _cars = signal<Car[]>(this.loadCache());
   readonly cars = this._cars.asReadonly();
 
+  readonly ready = signal(false);
+  readonly syncError = signal<string | null>(null);
+
   constructor() {
-    if (localStorage.getItem(STORAGE_KEY) === null) {
-      this.seedFromStaticFile();
+    this.refreshFromServer();
+  }
+
+  private async refreshFromServer(): Promise<void> {
+    try {
+      const data = await firstValueFrom(this.http.get<unknown>(API_URL));
+      if (Array.isArray(data) && data.every((c) => this.isValidCar(c))) {
+        this._cars.set(data as Car[]);
+        this.cacheLocally(data as Car[]);
+        this.ready.set(true);
+        return;
+      }
+    } catch {
+      // API indisponible (ex : dev local avec `ng serve` sans `vercel dev`).
     }
+    if (this._cars().length === 0) {
+      await this.seedFromStaticFile();
+    }
+    this.ready.set(true);
   }
 
   private async seedFromStaticFile(): Promise<void> {
     try {
       const data = await firstValueFrom(this.http.get<unknown>(SEED_URL));
       if (Array.isArray(data) && data.every((c) => this.isValidCar(c))) {
-        this.persist(data as Car[]);
+        this._cars.set(data as Car[]);
+        this.cacheLocally(data as Car[]);
       }
     } catch {
-      // Pas de fichier cars.json (ou invalide) : le catalogue démarre vide.
+      // Pas de fichier cars.json non plus : catalogue vide.
     }
   }
 
-  private load(): Car[] {
-    const raw = localStorage.getItem(STORAGE_KEY);
+  private loadCache(): Car[] {
+    const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return [];
     try {
       const parsed = JSON.parse(raw);
@@ -45,18 +64,29 @@ export class CarStorageService {
     }
   }
 
-  private persist(cars: Car[]): void {
+  private cacheLocally(cars: Car[]): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cars));
-      this._cars.set(cars);
-    } catch (err) {
-      if (err instanceof DOMException && (err.name === 'QuotaExceededError' || err.code === 22)) {
-        throw new Error(
-          "Stockage plein : supprimez des photos ou des annonces avant d'ajouter cette voiture."
-        );
-      }
-      throw err;
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cars));
+    } catch {
+      // Cache local best-effort uniquement ; l'API reste la source de vérité.
     }
+  }
+
+  private async syncToServer(cars: Car[]): Promise<void> {
+    this.syncError.set(null);
+    try {
+      await firstValueFrom(this.http.post(API_URL, cars));
+    } catch {
+      this.syncError.set(
+        "Enregistré sur cet appareil, mais la synchronisation en ligne a échoué. Vérifiez votre connexion et réessayez."
+      );
+    }
+  }
+
+  private save(cars: Car[]): void {
+    this._cars.set(cars);
+    this.cacheLocally(cars);
+    void this.syncToServer(cars);
   }
 
   getById(id: string): Car | undefined {
@@ -69,17 +99,16 @@ export class CarStorageService {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
     };
-    this.persist([car, ...this._cars()]);
+    this.save([car, ...this._cars()]);
     return car;
   }
 
   update(id: string, changes: CarInput): void {
-    const cars = this._cars().map((c) => (c.id === id ? { ...c, ...changes } : c));
-    this.persist(cars);
+    this.save(this._cars().map((c) => (c.id === id ? { ...c, ...changes } : c)));
   }
 
   remove(id: string): void {
-    this.persist(this._cars().filter((c) => c.id !== id));
+    this.save(this._cars().filter((c) => c.id !== id));
   }
 
   exportJson(): void {
@@ -107,7 +136,7 @@ export class CarStorageService {
         'Le fichier ne correspond pas au format attendu (liste de voitures).'
       );
     }
-    this.persist(parsed as Car[]);
+    this.save(parsed as Car[]);
   }
 
   private isValidCar(value: unknown): value is Car {
