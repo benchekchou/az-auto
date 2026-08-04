@@ -1,0 +1,109 @@
+@if (car(); as car) {
+  <div class="detail container">
+    <button type="button" class="back-link" (click)="back()">← Retour au catalogue</button>
+
+    <div class="detail__layout">
+      <div class="detail__main">
+        <div class="detail__photo">
+          <app-photo-carousel [photos]="car.photos" />
+          <span class="badge detail__status" [class]="statusClass()">{{ car.statut }}</span>
+          <button
+            type="button"
+            class="detail__fav"
+            [class.detail__fav--active]="isFavorite()"
+            (click)="toggleFavorite()"
+            aria-label="Ajouter aux favoris"
+          >
+            <svg viewBox="0 0 24 24" width="19" height="19" [attr.fill]="isFavorite() ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 20s-7-4.35-9.5-8.5C.7 8 2 4.5 5.5 4c2-.3 3.7.7 4.9 2.3C11.6 4.7 13.3 3.7 15.3 4c3.5.5 4.8 4 3 7.5C20.2 15.65 12 20 12 20z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="detail__heading">
+          <h1>{{ car.marque }} {{ car.modele }}</h1>
+        </div>
+
+        <p class="detail__price">{{ car.prix | number: '1.0-0' : 'fr-FR' }} €</p>
+        <p class="detail__meta">
+          {{ car.annee }} · {{ car.kilometrage | number: '1.0-0' : 'fr-FR' }} km · {{ car.carburant }} · {{ car.transmission }}
+        </p>
+
+        @if (car.couleur) {
+          <p class="detail__row"><strong>Couleur :</strong> {{ car.couleur }}</p>
+        }
+
+        @if (car.description) {
+          <div class="detail__description">
+            <h2>Description</h2>
+            <p>{{ car.description }}</p>
+          </div>
+        }
+
+        <div class="panel finance">
+          <h2 class="panel__title">Simulateur de financement</h2>
+          <div class="finance__grid">
+            <label>
+              <span>Apport (€)</span>
+              <input type="number" min="0" step="100" [(ngModel)]="apport" />
+            </label>
+            <label>
+              <span>Durée</span>
+              <select [(ngModel)]="duree">
+                @for (d of durees; track d) {
+                  <option [value]="d">{{ d }} mois</option>
+                }
+              </select>
+            </label>
+            <label>
+              <span>Taux annuel (%)</span>
+              <input type="number" min="0" max="20" step="0.1" [(ngModel)]="taux" />
+            </label>
+          </div>
+          <div class="finance__result">
+            <span>Mensualité estimée</span>
+            <strong>{{ mensualite() | number: '1.0-0' : 'fr-FR' }} € / mois</strong>
+          </div>
+          <p class="finance__disclaimer">
+            Simulation indicative et non contractuelle, hors assurance, sous réserve d'acceptation par un organisme de financement.
+          </p>
+        </div>
+
+        <div class="admin-panel">
+          <h2 class="panel__title panel__title--muted">Gestion</h2>
+          <div class="detail__actions">
+            <button type="button" class="btn btn--ghost btn--sm" (click)="edit()">Modifier</button>
+            <button type="button" class="btn btn--danger btn--sm" (click)="remove()">Supprimer</button>
+
+            <div class="status-switch">
+              @for (statut of statuts; track statut) {
+                <button
+                  type="button"
+                  class="status-switch__btn"
+                  [class.status-switch__btn--active]="statut === car.statut"
+                  (click)="setStatus(statut)"
+                >
+                  {{ statut }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="detail__side">
+        <div class="panel contact-panel">
+          <h2 class="panel__title">Intéressé par ce véhicule ?</h2>
+          <p class="contact-panel__text">Contactez {{ garage.nom }} pour un essai ou plus d'informations.</p>
+          <a [href]="whatsappLink" target="_blank" rel="noopener" class="btn btn--gold contact-panel__btn">WhatsApp</a>
+          <a [href]="telLink" class="btn btn--primary contact-panel__btn">{{ garage.telephone }}</a>
+          <a [href]="mailLink" class="btn btn--ghost contact-panel__btn">Envoyer un e-mail</a>
+          <div class="contact-panel__info">
+            <span>{{ garage.adresse }}</span>
+            <span>{{ garage.horaires }}</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+}

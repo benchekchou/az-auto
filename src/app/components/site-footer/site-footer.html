@@ -1,0 +1,33 @@
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <span class="footer__name">{{ garage.nom }}</span>
+      <p class="footer__tagline">{{ garage.tagline }}</p>
+    </div>
+
+    <div class="footer__col">
+      <h3>Contact</h3>
+      <a [href]="telLink">{{ garage.telephone }}</a>
+      <a [href]="whatsappLink" target="_blank" rel="noopener">WhatsApp</a>
+      <a [href]="'mailto:' + garage.email">{{ garage.email }}</a>
+    </div>
+
+    <div class="footer__col">
+      <h3>Garage</h3>
+      <span>{{ garage.adresse }}</span>
+      <span>{{ garage.horaires }}</span>
+    </div>
+
+    <div class="footer__col">
+      <h3>Navigation</h3>
+      <a routerLink="/catalogue">Catalogue</a>
+      <a routerLink="/comparateur">Comparateur</a>
+      <a routerLink="/voitures/nouveau">Espace gestion</a>
+    </div>
+  </div>
+
+  <div class="footer__bottom container">
+    <span>© {{ year }} {{ garage.nom }}. Tous droits réservés.</span>
+    <span>Garage automobile — {{ garage.ville }}</span>
+  </div>
+</footer>

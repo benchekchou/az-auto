@@ -1,0 +1,222 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--ink);
+  border-bottom: 1px solid var(--ink-line);
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  &__mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.45rem;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+
+    img {
+      display: block;
+      height: 30px;
+      width: auto;
+    }
+  }
+
+  &__brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  &__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  &__place {
+    font-size: 0.72rem;
+    color: var(--gold-light);
+    letter-spacing: 0.04em;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    margin-left: 1rem;
+    flex: 1;
+
+    a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+
+      &:hover {
+        color: #fff;
+      }
+
+      &.is-active {
+        color: var(--gold-light);
+        border-color: var(--gold);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__icon-link,
+  &__icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+  }
+
+  &__badge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    font-size: 0.62rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__admin {
+    position: relative;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 0.6rem);
+    right: 0;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.15s ease both;
+
+    button {
+      border: none;
+      background: none;
+      text-align: left;
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      cursor: pointer;
+
+      &:hover {
+        background: var(--surface-alt);
+        color: var(--gold-dark);
+      }
+
+      & + button {
+        border-top: 1px solid var(--surface-line);
+      }
+    }
+  }
+
+  &__burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    cursor: pointer;
+
+    span {
+      width: 16px;
+      height: 1.5px;
+      background: #fff;
+      margin: 0 auto;
+    }
+  }
+
+  &__error {
+    margin: 0 1.5rem 0.75rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .header__nav {
+    position: fixed;
+    inset: 61px 0 auto 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    background: var(--ink);
+    border-bottom: 1px solid var(--ink-line);
+    padding: 0.5rem 1.5rem 1rem;
+    transform: translateY(-120%);
+    opacity: 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    a {
+      width: 100%;
+      padding: 0.6rem 0;
+    }
+
+    &--open {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .header__burger {
+    display: flex;
+  }
+}

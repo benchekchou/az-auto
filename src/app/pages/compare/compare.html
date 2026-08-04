@@ -1,0 +1,86 @@
+<section class="cmp-header">
+  <div class="container">
+    <span class="eyebrow eyebrow--light">Comparateur</span>
+    <h1>Comparez vos véhicules favoris</h1>
+  </div>
+</section>
+
+<div class="container cmp-page">
+  @if (cars().length === 0) {
+    <div class="empty-state">
+      <p>Aucun véhicule à comparer pour le moment.</p>
+      <a routerLink="/catalogue" class="btn btn--gold">Parcourir le catalogue</a>
+    </div>
+  } @else {
+    <div class="cmp-toolbar">
+      <span>{{ cars().length }} véhicule{{ cars().length > 1 ? 's' : '' }} sélectionné{{ cars().length > 1 ? 's' : '' }} (max 3)</span>
+      <button type="button" class="btn btn--ghost btn--sm" (click)="clear()">Tout retirer</button>
+    </div>
+
+    <div class="cmp-table" [style.grid-template-columns]="'160px repeat(' + cars().length + ', 1fr)'">
+      <div class="cmp-table__row cmp-table__row--cards">
+        <div class="cmp-table__label"></div>
+        @for (car of cars(); track car.id) {
+          <div class="cmp-card">
+            @if (car.photos[0]) {
+              <img [src]="car.photos[0]" [alt]="car.marque + ' ' + car.modele" />
+            }
+            <button type="button" class="cmp-card__remove" (click)="remove(car.id)" aria-label="Retirer">×</button>
+            <h3>{{ car.marque }} {{ car.modele }}</h3>
+            <p class="cmp-card__price" [class.cmp-card__price--best]="car.id === cheapestId()">
+              {{ car.prix | number: '1.0-0' : 'fr-FR' }} €
+              @if (car.id === cheapestId()) {
+                <span class="cmp-tag">Meilleur prix</span>
+              }
+            </p>
+            <button type="button" class="btn btn--ghost btn--sm" (click)="viewDetail(car.id)">Voir la fiche</button>
+          </div>
+        }
+      </div>
+
+      <div class="cmp-table__row">
+        <div class="cmp-table__label">Année</div>
+        @for (car of cars(); track car.id) {
+          <div>{{ car.annee }}</div>
+        }
+      </div>
+
+      <div class="cmp-table__row">
+        <div class="cmp-table__label">Kilométrage</div>
+        @for (car of cars(); track car.id) {
+          <div [class.cmp-table__best]="car.id === lowestKmId()">
+            {{ car.kilometrage | number: '1.0-0' : 'fr-FR' }} km
+          </div>
+        }
+      </div>
+
+      <div class="cmp-table__row">
+        <div class="cmp-table__label">Carburant</div>
+        @for (car of cars(); track car.id) {
+          <div>{{ car.carburant }}</div>
+        }
+      </div>
+
+      <div class="cmp-table__row">
+        <div class="cmp-table__label">Transmission</div>
+        @for (car of cars(); track car.id) {
+          <div>{{ car.transmission }}</div>
+        }
+      </div>
+
+      <div class="cmp-table__row">
+        <div class="cmp-table__label">Couleur</div>
+        @for (car of cars(); track car.id) {
+          <div>{{ car.couleur || '—' }}</div>
+        }
+      </div>
+
+      <div class="cmp-table__row">
+        <div class="cmp-table__label">Statut</div>
+        @for (car of cars(); track car.id) {
+          <div>{{ car.statut }}</div>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,25 @@
+<div class="carousel">
+  @if (current()) {
+    <img [src]="current()" alt="Photo du véhicule" class="carousel__image" />
+  } @else {
+    <div class="carousel__placeholder">Pas de photo</div>
+  }
+
+  @if (hasMultiple()) {
+    <button type="button" class="carousel__arrow carousel__arrow--prev" (click)="prev($event)" aria-label="Photo précédente">
+      ‹
+    </button>
+    <button type="button" class="carousel__arrow carousel__arrow--next" (click)="next($event)" aria-label="Photo suivante">
+      ›
+    </button>
+    <div class="carousel__dots">
+      @for (photo of photos(); track $index) {
+        <span
+          class="carousel__dot"
+          [class.carousel__dot--active]="$index === index()"
+          (click)="goTo($event, $index)"
+        ></span>
+      }
+    </div>
+  }
+</div>

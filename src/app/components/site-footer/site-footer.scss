@@ -1,0 +1,78 @@
+.footer {
+  margin-top: auto;
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.75);
+  padding-top: 3rem;
+  border-top: 1px solid var(--gold-dark);
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 2rem;
+    padding-bottom: 2.5rem;
+  }
+
+  &__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  &__name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+
+  &__tagline {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 32ch;
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+
+    h3 {
+      margin: 0 0 0.3rem;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    a,
+    span {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-size: 0.87rem;
+    }
+
+    a:hover {
+      color: var(--gold-light);
+    }
+  }
+
+  &__bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1.1rem 1.5rem;
+    border-top: 1px solid var(--ink-line);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+@media (max-width: 760px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

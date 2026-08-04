@@ -1,0 +1,139 @@
+.cmp-header {
+  background: var(--ink);
+  color: #fff;
+  padding: 3rem 0 2.25rem;
+
+  h1 {
+    margin: 0.4rem 0 0;
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+  }
+}
+
+.cmp-page {
+  padding: 1.75rem 1.5rem 4rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  color: var(--text-muted);
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+}
+
+.cmp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.cmp-table {
+  display: grid;
+  gap: 0.5rem 1rem;
+  overflow-x: auto;
+}
+
+.cmp-table__row {
+  display: contents;
+
+  > div {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 0.5rem;
+    border-bottom: 1px solid var(--surface-line);
+    font-size: 0.9rem;
+  }
+}
+
+.cmp-table__label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cmp-table__best {
+  color: var(--gold-dark);
+  font-weight: 700;
+}
+
+.cmp-table__row--cards > div {
+  border-bottom: none;
+  align-items: stretch;
+}
+
+.cmp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--surface-line);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+
+  img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  h3 {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
+  }
+
+  &__remove {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    border: none;
+    background: rgba(10, 14, 20, 0.6);
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  &__price {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &--best {
+      color: var(--gold-dark);
+    }
+  }
+}
+
+.cmp-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--gold);
+  color: var(--ink);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+@media (max-width: 700px) {
+  .cmp-table {
+    grid-template-columns: 120px repeat(3, minmax(160px, 1fr)) !important;
+  }
+}

@@ -1,0 +1,88 @@
+<section class="cat-header">
+  <div class="container">
+    <span class="eyebrow eyebrow--light">Catalogue</span>
+    <h1>Tous nos véhicules</h1>
+  </div>
+</section>
+
+<section class="filters container">
+  <div class="filters__row">
+    <input
+      type="search"
+      class="filters__search"
+      placeholder="Rechercher une marque, un modèle…"
+      [(ngModel)]="search"
+    />
+
+    <select [(ngModel)]="marque">
+      <option value="">Toutes les marques</option>
+      @for (m of marques(); track m) {
+        <option [value]="m">{{ m }}</option>
+      }
+    </select>
+
+    <input type="number" min="0" placeholder="Prix max €" [(ngModel)]="prixMax" />
+    <input type="number" min="1950" placeholder="Année min" [(ngModel)]="anneeMin" />
+
+    <select [(ngModel)]="carburant">
+      <option value="">Tout carburant</option>
+      @for (c of carburants; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="transmission">
+      <option value="">Toute transmission</option>
+      @for (t of transmissions; track t) {
+        <option [value]="t">{{ t }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="statut">
+      <option value="">Tout statut</option>
+      @for (s of statuts; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+
+    <select [(ngModel)]="sort">
+      <option value="recent">Plus récent</option>
+      <option value="prix-asc">Prix croissant</option>
+      <option value="prix-desc">Prix décroissant</option>
+      <option value="annee-desc">Année la plus récente</option>
+      <option value="km-asc">Kilométrage croissant</option>
+    </select>
+  </div>
+
+  <div class="filters__row2">
+    <label class="filters__fav-toggle">
+      <input type="checkbox" [(ngModel)]="favorisOnly" />
+      Favoris uniquement
+    </label>
+
+    @if (hasActiveFilters()) {
+      <button type="button" class="filters__reset" (click)="resetFilters()">Réinitialiser les filtres</button>
+    }
+  </div>
+</section>
+
+<div class="container results-count">
+  {{ filteredCars().length }} véhicule{{ filteredCars().length > 1 ? 's' : '' }} trouvé{{ filteredCars().length > 1 ? 's' : '' }}
+</div>
+
+@if (cars().length === 0) {
+  <div class="empty-state container">
+    <p>Aucune voiture pour le moment.</p>
+  </div>
+} @else if (filteredCars().length === 0) {
+  <div class="empty-state container">
+    <p>Aucun véhicule ne correspond à ces critères.</p>
+    <button type="button" class="btn btn--ghost" (click)="resetFilters()">Réinitialiser les filtres</button>
+  </div>
+} @else {
+  <div class="grid container">
+    @for (car of filteredCars(); track car.id) {
+      <app-car-card [car]="car" />
+    }
+  </div>
+}

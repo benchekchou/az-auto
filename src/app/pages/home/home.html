@@ -1,0 +1,107 @@
+<section class="hero">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="container hero__content fade-in">
+    <span class="eyebrow eyebrow--light">Garage automobile · {{ garage.ville }}</span>
+    <h1 class="hero__title">{{ garage.tagline }}</h1>
+    <p class="hero__text">{{ garage.about }}</p>
+    <div class="hero__actions">
+      <a routerLink="/catalogue" class="btn btn--gold">Découvrir le catalogue</a>
+      <a [href]="whatsappLink" target="_blank" rel="noopener" class="btn btn--outline-light">Nous contacter</a>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats__grid">
+    <div class="stats__item">
+      <span class="stats__number">{{ availableCars().length }}</span>
+      <span class="stats__label">Véhicules disponibles</span>
+    </div>
+    <div class="stats__item">
+      <span class="stats__number">{{ garage.stats.anneesActivite }}+</span>
+      <span class="stats__label">Années d'activité</span>
+    </div>
+    <div class="stats__item">
+      <span class="stats__number">{{ garage.stats.vehiculesVendus }}+</span>
+      <span class="stats__label">Véhicules vendus</span>
+    </div>
+    <div class="stats__item">
+      <span class="stats__number">{{ garage.stats.noteClients }}/5</span>
+      <span class="stats__label">Satisfaction client</span>
+    </div>
+  </div>
+</section>
+
+<section class="why container">
+  <span class="eyebrow">Pourquoi nous choisir</span>
+  <h2 class="why__title">Une expérience d'achat sans mauvaise surprise</h2>
+
+  <div class="why__grid">
+    <div class="why__card">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+      <h3>Garantie incluse</h3>
+      <p>Chaque véhicule est vendu avec une garantie pour rouler l'esprit tranquille.</p>
+    </div>
+    <div class="why__card">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M9 11H5a2 2 0 0 0-2 2v7h6z" />
+        <path d="M15 5h4a2 2 0 0 1 2 2v13h-6" />
+        <path d="M9 5h6v15H9z" />
+      </svg>
+      <h3>Contrôle technique</h3>
+      <p>Historique et contrôle technique vérifiés avant chaque mise en vente.</p>
+    </div>
+    <div class="why__card">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M17 2 21 6 17 10" />
+        <path d="M3 12v-2a4 4 0 0 1 4-4h14" />
+        <path d="M7 22 3 18 7 14" />
+        <path d="M21 12v2a4 4 0 0 1-4 4H3" />
+      </svg>
+      <h3>Reprise de véhicule</h3>
+      <p>Faites reprendre votre ancien véhicule et simplifiez votre changement de voiture.</p>
+    </div>
+    <div class="why__card">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="2" y="5" width="20" height="14" rx="2" />
+        <path d="M2 10h20" />
+      </svg>
+      <h3>Financement sur mesure</h3>
+      <p>Simulez votre mensualité directement sur la fiche de chaque véhicule.</p>
+    </div>
+  </div>
+</section>
+
+@if (featuredCars().length > 0) {
+  <section class="featured container">
+    <div class="featured__head">
+      <div>
+        <span class="eyebrow">Sélection du moment</span>
+        <h2 class="featured__title">Nos véhicules à la une</h2>
+      </div>
+      <a routerLink="/catalogue" class="featured__link">Voir tout le catalogue →</a>
+    </div>
+
+    <div class="featured__grid">
+      @for (car of featuredCars(); track car.id) {
+        <app-car-card [car]="car" />
+      }
+    </div>
+  </section>
+}
+
+<section class="cta" id="contact">
+  <div class="container cta__inner">
+    <div>
+      <h2>Une question ? Parlons-en.</h2>
+      <p>{{ garage.horaires }} · {{ garage.adresse }}</p>
+    </div>
+    <div class="cta__actions">
+      <a [href]="telLink" class="btn btn--ghost">{{ garage.telephone }}</a>
+      <a [href]="whatsappLink" target="_blank" rel="noopener" class="btn btn--gold">Écrire sur WhatsApp</a>
+    </div>
+  </div>
+</section>

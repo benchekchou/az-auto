@@ -1,0 +1,20 @@
+@if (cars().length > 0) {
+  <div class="compare-bar fade-in">
+    <div class="compare-bar__items">
+      @for (car of cars(); track car!.id) {
+        <div class="compare-bar__item">
+          @if (car!.photos[0]) {
+            <img [src]="car!.photos[0]" [alt]="car!.marque" />
+          }
+          <span>{{ car!.marque }} {{ car!.modele }}</span>
+          <button type="button" (click)="remove(car!.id)" aria-label="Retirer">×</button>
+        </div>
+      }
+    </div>
+
+    <div class="compare-bar__actions">
+      <button type="button" class="btn btn--ghost btn--sm" (click)="clear()">Vider</button>
+      <a routerLink="/comparateur" class="btn btn--gold btn--sm">Comparer ({{ cars().length }})</a>
+    </div>
+  </div>
+}
