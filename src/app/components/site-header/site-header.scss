@@ -112,6 +112,11 @@
     }
   }
 
+  &__icon-btn--active {
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
   &__badge {
     position: absolute;
     top: -0.25rem;
@@ -172,6 +177,10 @@
       & + button {
         border-top: 1px solid var(--surface-line);
       }
+    }
+
+    &-logout {
+      color: var(--danger) !important;
     }
   }
 

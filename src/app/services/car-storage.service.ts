@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Car, CarInput, CARBURANTS, TRANSMISSIONS, STATUTS } from '../models/car.model';
+import { AuthService } from './auth.service';
 
 // Cache local de secours (mode hors-ligne, ou dev local sans fonctions Vercel).
 // La source de vérité reste l'API /api/cars (Vercel Blob), partagée par tous les appareils.
@@ -12,6 +13,7 @@ const SEED_URL = 'cars.json';
 @Injectable({ providedIn: 'root' })
 export class CarStorageService {
   private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthService);
 
   private readonly _cars = signal<Car[]>(this.loadCache());
   readonly cars = this._cars.asReadonly();
@@ -74,9 +76,18 @@ export class CarStorageService {
 
   private async syncToServer(cars: Car[]): Promise<void> {
     this.syncError.set(null);
+    const token = this.auth.token();
     try {
-      await firstValueFrom(this.http.post(API_URL, cars));
-    } catch {
+      const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+      await firstValueFrom(this.http.post(API_URL, cars, { headers }));
+    } catch (err: any) {
+      if (err?.status === 401) {
+        // Jeton refusé par le serveur (expiré/invalide) : on déconnecte pour
+        // forcer une reconnexion plutôt que de laisser croire que ça a marché.
+        this.auth.logout();
+        this.syncError.set('Session admin expirée. Reconnectez-vous pour enregistrer vos modifications.');
+        return;
+      }
       this.syncError.set(
         "Enregistré sur cet appareil, mais la synchronisation en ligne a échoué. Vérifiez votre connexion et réessayez."
       );
@@ -89,11 +100,18 @@ export class CarStorageService {
     void this.syncToServer(cars);
   }
 
+  private requireAuth(): void {
+    if (!this.auth.isAuthenticated()) {
+      throw new Error('Vous devez être connecté en tant qu’admin pour modifier le catalogue.');
+    }
+  }
+
   getById(id: string): Car | undefined {
     return this._cars().find((c) => c.id === id);
   }
 
   add(input: CarInput): Car {
+    this.requireAuth();
     const car: Car = {
       ...input,
       id: crypto.randomUUID(),
@@ -104,10 +122,12 @@ export class CarStorageService {
   }
 
   update(id: string, changes: CarInput): void {
+    this.requireAuth();
     this.save(this._cars().map((c) => (c.id === id ? { ...c, ...changes } : c)));
   }
 
   remove(id: string): void {
+    this.requireAuth();
     this.save(this._cars().filter((c) => c.id !== id));
   }
 
@@ -124,6 +144,7 @@ export class CarStorageService {
   }
 
   async importJson(file: File): Promise<void> {
+    this.requireAuth();
     const text = await file.text();
     let parsed: unknown;
     try {

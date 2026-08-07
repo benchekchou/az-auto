@@ -69,26 +69,28 @@
           </p>
         </div>
 
-        <div class="admin-panel">
-          <h2 class="panel__title panel__title--muted">Gestion</h2>
-          <div class="detail__actions">
-            <button type="button" class="btn btn--ghost btn--sm" (click)="edit()">Modifier</button>
-            <button type="button" class="btn btn--danger btn--sm" (click)="remove()">Supprimer</button>
+        @if (auth.isAuthenticated()) {
+          <div class="admin-panel">
+            <h2 class="panel__title panel__title--muted">Gestion</h2>
+            <div class="detail__actions">
+              <button type="button" class="btn btn--ghost btn--sm" (click)="edit()">Modifier</button>
+              <button type="button" class="btn btn--danger btn--sm" (click)="remove()">Supprimer</button>
 
-            <div class="status-switch">
-              @for (statut of statuts; track statut) {
-                <button
-                  type="button"
-                  class="status-switch__btn"
-                  [class.status-switch__btn--active]="statut === car.statut"
-                  (click)="setStatus(statut)"
-                >
-                  {{ statut }}
-                </button>
-              }
+              <div class="status-switch">
+                @for (statut of statuts; track statut) {
+                  <button
+                    type="button"
+                    class="status-switch__btn"
+                    [class.status-switch__btn--active]="statut === car.statut"
+                    (click)="setStatus(statut)"
+                  >
+                    {{ statut }}
+                  </button>
+                }
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
 
       <aside class="detail__side">

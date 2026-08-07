@@ -28,6 +28,18 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
+    // Écriture réservée à l'admin : vérifie le jeton envoyé en en-tête
+    // Authorization (voir AuthService côté client, et login.js pour l'émission).
+    // C'est ce contrôle-ci, pas l'interface, qui empêche un client de modifier
+    // le catalogue — il reste actif même si quelqu'un appelle l'API directement.
+    const expected = process.env.ADMIN_PASSWORD;
+    const auth = req.headers['authorization'] || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    if (!expected || token !== expected) {
+      res.status(401).json({ error: 'Authentification requise pour modifier le catalogue.' });
+      return;
+    }
+
     const cars = req.body;
     if (!Array.isArray(cars)) {
       res.status(400).json({ error: 'Le corps de la requête doit être un tableau de voitures.' });

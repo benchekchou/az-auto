@@ -34,14 +34,21 @@
       </a>
 
       <div class="header__admin">
-        <button type="button" class="header__icon-btn" (click)="toggleAdmin()" aria-label="Gérer le catalogue" title="Gérer">
+        <button
+          type="button"
+          class="header__icon-btn"
+          [class.header__icon-btn--active]="auth.isAuthenticated()"
+          (click)="toggleAdmin()"
+          aria-label="Gérer le catalogue"
+          title="Gérer"
+        >
           <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
             <path d="M19.4 13a7.4 7.4 0 0 0 .06-2l2.03-1.58-2-3.46-2.4.96a7.5 7.5 0 0 0-1.73-1L15 3h-4l-.36 2.5a7.5 7.5 0 0 0-1.73 1l-2.4-.96-2 3.46L6.54 10.5a7.4 7.4 0 0 0 0 2L4.5 15.08l2 3.46 2.4-.96c.52.43 1.1.78 1.73 1L11 22h4l.36-2.42c.63-.22 1.21-.57 1.73-1l2.4.96 2-3.46L19.4 13z" />
           </svg>
         </button>
 
-        @if (isAdminOpen()) {
+        @if (isAdminOpen() && auth.isAuthenticated()) {
           <div class="header__dropdown">
             <button type="button" (click)="addCar()">+ Ajouter une voiture</button>
             <button type="button" (click)="exportJson()">
@@ -49,6 +56,7 @@
               <small>à remplacer dans public/ avant de redéployer</small>
             </button>
             <button type="button" (click)="triggerImport()">Importer un cars.json</button>
+            <button type="button" class="header__dropdown-logout" (click)="logout()">Se déconnecter</button>
           </div>
         }
       </div>

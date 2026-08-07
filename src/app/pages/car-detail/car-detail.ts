@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CarStorageService } from '../../services/car-storage.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { AuthService } from '../../services/auth.service';
 import { PhotoCarousel } from '../../components/photo-carousel/photo-carousel';
 import { Statut, STATUTS } from '../../models/car.model';
 import { monthlyPayment } from '../../services/finance.util';
@@ -22,6 +23,7 @@ export class CarDetail {
   private readonly router = inject(Router);
   private readonly storage = inject(CarStorageService);
   private readonly favorites = inject(FavoritesService);
+  readonly auth = inject(AuthService);
 
   private readonly id = signal(this.route.snapshot.paramMap.get('id') ?? '');
   readonly statuts = STATUTS;
@@ -111,7 +113,11 @@ export class CarDetail {
     const car = this.car();
     if (!car) return;
     const { id, createdAt, ...input } = car;
-    this.storage.update(id, { ...input, statut });
+    try {
+      this.storage.update(id, { ...input, statut });
+    } catch {
+      // Non-admin (bouton normalement masqué) : on ignore silencieusement.
+    }
   }
 
   back(): void {

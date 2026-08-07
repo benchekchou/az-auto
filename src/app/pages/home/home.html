@@ -67,6 +67,27 @@
   </div>
 </section>
 
+<section class="delivery container">
+  <div class="delivery__card">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" class="delivery__icon">
+      <path d="M3 7h11v10H3z" />
+      <path d="M14 10h4l3 3v4h-7z" />
+      <circle cx="7" cy="19" r="1.6" />
+      <circle cx="17.5" cy="19" r="1.6" />
+    </svg>
+    <div class="delivery__content">
+      <h3>{{ garage.livraison.texte }}</h3>
+      <p class="delivery__sub">Disponible sur :</p>
+      <ul class="delivery__villes">
+        @for (ville of garage.livraison.villes; track ville) {
+          <li>{{ ville }}</li>
+        }
+      </ul>
+      <p class="delivery__complement">{{ garage.livraison.complement }}</p>
+    </div>
+  </div>
+</section>
+
 @if (featuredCars().length > 0) {
   <section class="featured container">
     <div class="featured__head">

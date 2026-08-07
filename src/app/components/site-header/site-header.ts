@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, inject, signal, viewChild } from '
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CarStorageService } from '../../services/car-storage.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { AuthService } from '../../services/auth.service';
 import { GARAGE_CONFIG } from '../../config/garage.config';
 
 @Component({
@@ -15,6 +16,7 @@ export class SiteHeader {
   private readonly favorites = inject(FavoritesService);
   private readonly router = inject(Router);
   private readonly host = inject(ElementRef<HTMLElement>);
+  readonly auth = inject(AuthService);
 
   readonly garage = GARAGE_CONFIG;
   readonly favoritesCount = () => this.favorites.ids().size;
@@ -41,7 +43,18 @@ export class SiteHeader {
   }
 
   toggleAdmin(): void {
+    if (!this.auth.isAuthenticated()) {
+      this.closeMenu();
+      this.router.navigate(['/admin/connexion']);
+      return;
+    }
     this.isAdminOpen.update((v) => !v);
+  }
+
+  logout(): void {
+    this.isAdminOpen.set(false);
+    this.auth.logout();
+    this.router.navigate(['/']);
   }
 
   addCar(): void {

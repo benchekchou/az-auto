@@ -21,4 +21,9 @@ export const GARAGE_CONFIG = {
   financement: {
     tauxDefautPct: 5.9,
   },
+  livraison: {
+    texte: 'Livraison possible dans toute la France à partir de 99€ TTC',
+    villes: ['Saint-Orens-de-Gameville / Toulouse 31400', 'Graulhet 81300', 'Langeac 43300'],
+    complement: 'Et les alentours',
+  },
 };

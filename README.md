@@ -2,6 +2,20 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.2.
 
+## Authentification admin (ajout/modification de voitures)
+
+Le catalogue reste visible par tous sans connexion. Ajouter/modifier/supprimer une voiture
+nécessite d'être connecté sur `/admin/connexion`, protégé par un mot de passe défini côté
+serveur uniquement (jamais dans le code) :
+
+1. Sur Vercel : **Project Settings → Environment Variables** → ajouter `ADMIN_PASSWORD`
+   avec le mot de passe choisi (Production **et** Preview), puis redéployer.
+2. En local avec `vercel dev` : créer un fichier `.env.local` à la racine avec
+   `ADMIN_PASSWORD=votre-mot-de-passe` (ce fichier ne doit pas être commité).
+
+Sans `vercel dev` (`ng serve` seul), les fonctions `/api/*` ne tournent pas : la connexion
+admin ne fonctionnera pas, seul le catalogue en lecture (fallback `cars.json`) sera visible.
+
 ## Development server
 
 To start a local development server, run:

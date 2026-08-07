@@ -20,6 +20,15 @@
     </div>
 
     <div class="footer__col">
+      <h3>Livraison</h3>
+      <span>{{ garage.livraison.texte }}</span>
+      @for (ville of garage.livraison.villes; track ville) {
+        <span>{{ ville }}</span>
+      }
+      <span>{{ garage.livraison.complement }}</span>
+    </div>
+
+    <div class="footer__col">
       <h3>Navigation</h3>
       <a routerLink="/catalogue">Catalogue</a>
       <a routerLink="/comparateur">Comparateur</a>
