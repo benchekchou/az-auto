@@ -71,10 +71,16 @@ export class CarForm {
 
     this.isProcessingPhotos.set(true);
     try {
+      // Redimensionnement local (canvas) puis upload immédiat vers Vercel
+      // Blob : seule l'URL renvoyée est conservée dans Car.photos, jamais le
+      // base64 lui-même. Voir CarStorageService.uploadPhoto — c'est ce qui
+      // évite de renvoyer tout le catalogue avec toutes ses photos à chaque
+      // sauvegarde (413 Payload Too Large côté /api/cars).
       const resized = await Promise.all(files.map((file) => resizeImage(file)));
-      this.photos.update((current) => [...current, ...resized]);
+      const uploaded = await Promise.all(resized.map((dataUrl) => this.storage.uploadPhoto(dataUrl)));
+      this.photos.update((current) => [...current, ...uploaded]);
     } catch {
-      this.photosError.set("Une des images n'a pas pu être traitée.");
+      this.photosError.set("Une des images n'a pas pu être traitée ou téléversée.");
     } finally {
       this.isProcessingPhotos.set(false);
     }

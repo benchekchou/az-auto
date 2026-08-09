@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 // La source de vérité reste l'API /api/cars (Vercel Blob), partagée par tous les appareils.
 const CACHE_KEY = 'zr-auto:cars';
 const API_URL = 'api/cars';
+const UPLOAD_URL = 'api/upload';
 const SEED_URL = 'cars.json';
 
 @Injectable({ providedIn: 'root' })
@@ -104,6 +105,23 @@ export class CarStorageService {
     if (!this.auth.isAuthenticated()) {
       throw new Error('Vous devez être connecté en tant qu’admin pour modifier le catalogue.');
     }
+  }
+
+  // Téléverse une photo (data URL base64) vers Vercel Blob et renvoie son URL
+  // publique. Contrairement à l'ancien flux (photos base64 stockées telles
+  // quelles dans Car.photos), ceci évite que le catalogue entier — toutes
+  // voitures et toutes photos confondues — soit renvoyé dans chaque
+  // POST /api/cars, ce qui finissait par dépasser la limite de taille de
+  // requête de Vercel (413 Payload Too Large) au fur et à mesure que le
+  // catalogue grandissait.
+  async uploadPhoto(dataUrl: string): Promise<string> {
+    this.requireAuth();
+    const token = this.auth.token();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+    const result = await firstValueFrom(
+      this.http.post<{ url: string }>(UPLOAD_URL, { data: dataUrl }, { headers })
+    );
+    return result.url;
   }
 
   getById(id: string): Car | undefined {
