@@ -36,10 +36,16 @@ module.exports = async function handler(req, res) {
   const ext = contentType.split('/')[1] || 'jpg';
 
   try {
+    // Store dédié "az-auto-photos" (public) : le store historique de ce
+    // projet (BLOB_STORE_ID, résolu via OIDC) est configuré en accès privé
+    // pour cars.json et refuse tout put() avec access:'public'. On cible
+    // donc explicitement le nouveau store public via son propre token, sans
+    // toucher à la résolution OIDC par défaut utilisée par cars.js.
     const blob = await put(`photos/${randomUUID()}.${ext}`, buffer, {
       access: 'public',
       contentType,
       addRandomSuffix: false,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     });
     res.status(200).json({ url: blob.url });
   } catch (err) {
