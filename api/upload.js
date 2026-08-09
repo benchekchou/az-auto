@@ -43,6 +43,9 @@ module.exports = async function handler(req, res) {
     });
     res.status(200).json({ url: blob.url });
   } catch (err) {
+    // Journalisé côté serveur (visible dans `vercel logs`) : le message
+    // renvoyé au client seul ne suffisait pas à diagnostiquer les 500 ici.
+    console.error('Échec de l’upload vers Vercel Blob :', err);
     res.status(500).json({ error: err instanceof Error ? err.message : "Erreur d'upload." });
   }
 };
