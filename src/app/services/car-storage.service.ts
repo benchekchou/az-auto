@@ -77,11 +77,29 @@ export class CarStorageService {
 
   private async syncToServer(cars: Car[]): Promise<void> {
     this.syncError.set(null);
-    const token = this.auth.token();
     try {
+      // Filet de sécurité pour les voitures enregistrées avant le passage à
+      // l'upload direct vers Blob (voir uploadPhoto) : si des photos sont
+      // encore des data URLs base64, on les téléverse maintenant et on
+      // remplace par leur URL avant d'envoyer le catalogue. Sans ça, ces
+      // vieilles photos continuent de gonfler CHAQUE POST /api/cars (toutes
+      // voitures confondues) jusqu'à redépasser la limite de 4.5 Mo de Vercel
+      // (413 Payload Too Large), même pour une modification qui ne les
+      // touche pas.
+      const migrated = await this.migrateBase64Photos(cars);
+      if (migrated !== cars) {
+        this._cars.set(migrated);
+        this.cacheLocally(migrated);
+      }
+
+      const token = this.auth.token();
       const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
-      await firstValueFrom(this.http.post(API_URL, cars, { headers }));
+      await firstValueFrom(this.http.post(API_URL, migrated, { headers }));
     } catch (err: any) {
+      // Toujours visible en console pour diagnostiquer (status HTTP réel,
+      // masqué par les messages utilisateur ci-dessous).
+      console.error('Échec de la synchronisation du catalogue :', err);
+
       if (err?.status === 401) {
         // Jeton refusé par le serveur (expiré/invalide) : on déconnecte pour
         // forcer une reconnexion plutôt que de laisser croire que ça a marché.
@@ -89,10 +107,34 @@ export class CarStorageService {
         this.syncError.set('Session admin expirée. Reconnectez-vous pour enregistrer vos modifications.');
         return;
       }
+      if (err?.status === 413) {
+        this.syncError.set(
+          'Enregistré sur cet appareil, mais le catalogue est trop volumineux pour être synchronisé (trop de photos). Réessayez : les photos existantes sont converties automatiquement, cela peut prendre quelques essais si la connexion est lente.'
+        );
+        return;
+      }
       this.syncError.set(
         "Enregistré sur cet appareil, mais la synchronisation en ligne a échoué. Vérifiez votre connexion et réessayez."
       );
     }
+  }
+
+  // Convertit en URLs Blob toute photo encore stockée en base64 (héritée
+  // d'avant l'upload direct). Ne retéléverse rien si le catalogue n'en
+  // contient plus, pour ne pas ralentir les sauvegardes suivantes.
+  private async migrateBase64Photos(cars: Car[]): Promise<Car[]> {
+    let changed = false;
+    const migrated = await Promise.all(
+      cars.map(async (car) => {
+        if (!car.photos.some((p) => p.startsWith('data:'))) return car;
+        changed = true;
+        const photos = await Promise.all(
+          car.photos.map((p) => (p.startsWith('data:') ? this.uploadPhoto(p) : p))
+        );
+        return { ...car, photos };
+      })
+    );
+    return changed ? migrated : cars;
   }
 
   private save(cars: Car[]): void {
